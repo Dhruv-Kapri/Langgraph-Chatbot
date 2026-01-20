@@ -1,0 +1,22 @@
+[project]
+name = "langgraph_chatbot"
+version = "0.1.0"
+description = "LangGraph chatbot with Streamlit frontend"
+requires-python = ">=3.10"
+
+dependencies = [
+    "streamlit",
+    "langchain",
+    "langgraph",
+    "langchain-google-genai",
+    "google-generativeai",
+    "langsmith",
+    "python-dotenv",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["backend*", "frontend*"]
