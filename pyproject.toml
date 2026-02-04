@@ -13,6 +13,8 @@ dependencies = [
     "langsmith",
     "python-dotenv",
     "langgraph-checkpoint-sqlite",
+    "langchain-community",
+    "ddgs",
 ]
 
 [build-system]

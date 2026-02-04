@@ -1,6 +1,9 @@
+from typing import Optional
+
 import streamlit as st
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
+from streamlit.elements.lib.mutable_status_container import StatusContainer
 from utils import displayAllMsg, displayLastMsg, set_thread_title
 
 from backend.langgraph_backend import chatbot
@@ -31,18 +34,43 @@ def render_chat():
 
     # stream the llm response
     with st.chat_message("assistant"):
-        ai_message = st.write_stream(
-            message_chunk.content
+
+        status_holder: dict[str, Optional[StatusContainer]] = {"box": None}
+
+        def ai_only_stream():
             for message_chunk, metadata in chatbot.stream(
                 {"messages": [HumanMessage(content=user_input)]},
                 config=CONFIG,
                 stream_mode="messages",
+            ):
+                if isinstance(message_chunk, ToolMessage):
+                    tool_name = getattr(message_chunk, "name", "tool")
+                    if status_holder["box"] is None:
+                        status_holder["box"] = st.status(
+                            f"🔧 Using `{tool_name}` …", expanded=True
+                        )
+                    else:
+                        status_holder["box"].update(
+                            label=f"🔧 Using `{tool_name}` …",
+                            state="running",
+                            expanded=True,
+                        )
+
+                if isinstance(message_chunk, AIMessage):
+                    yield message_chunk.content
+
+        ai_message = st.write_stream(ai_only_stream())
+
+        if status_holder["box"] is not None:
+            status_holder["box"].update(
+                label=f"✅ Tool finished",
+                state="running",
+                expanded=True,
             )
-            if isinstance(message_chunk, BaseMessage)
-        )
 
     st.session_state["message_history"].append(
         {"role": "assistant", "content": ai_message}
     )
 
+    set_thread_title(user_input)
     set_thread_title(user_input)
