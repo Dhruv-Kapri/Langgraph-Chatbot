@@ -1,4 +1,6 @@
-from langgraph.checkpoint.memory import InMemorySaver
+import sqlite3
+
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
 
 from backend.graph.nodes import chat_node
@@ -6,7 +8,8 @@ from backend.graph.state import ChatState
 
 
 def build_chat_graph():
-    checkpointer = InMemorySaver()
+    conn = sqlite3.connect(database="langgraph_chatbot.db", check_same_thread=False)
+    checkpointer = SqliteSaver(conn=conn)
 
     graph = StateGraph(ChatState)
     graph.add_node("chat_node", chat_node)

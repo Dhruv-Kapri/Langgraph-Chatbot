@@ -12,6 +12,7 @@ dependencies = [
     "google-generativeai",
     "langsmith",
     "python-dotenv",
+    "langgraph-checkpoint-sqlite",
 ]
 
 [build-system]

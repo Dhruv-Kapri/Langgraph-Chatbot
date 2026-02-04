@@ -1,13 +1,15 @@
 import uuid
 
 import streamlit as st
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import HumanMessage
 
 from backend import chatbot, llm_general
 
+from .db import register_thread, save_thread_title
+
 
 def generate_thread_id():
-    return uuid.uuid4()
+    return str(uuid.uuid4())
 
 
 def new_chat() -> None:
@@ -15,11 +17,6 @@ def new_chat() -> None:
     st.session_state["active_thread"] = thread_id
     register_thread(thread_id)
     st.session_state["message_history"] = []
-
-
-def register_thread(thread_id) -> None:
-    if thread_id not in st.session_state["threads"]:
-        st.session_state["threads"][thread_id] = {"title": None}
 
 
 def generate_chat_title(first_user_msg: str) -> str:
@@ -32,11 +29,15 @@ def generate_chat_title(first_user_msg: str) -> str:
 def set_thread_title(user_input: str):
     thread_id = st.session_state["active_thread"]
 
-    if st.session_state["threads"][thread_id]["title"] is None:
-        st.session_state["threads"][thread_id]["title"] = generate_chat_title(
-            user_input
-        )
-        st.rerun()
+    if st.session_state["threads"][thread_id]["title"] is not None:
+        return
+
+    title = generate_chat_title(user_input)
+
+    st.session_state["threads"][thread_id]["title"] = title
+    save_thread_title(thread_id, title)
+
+    st.rerun()
 
 
 def load_conversation(thread_id):
