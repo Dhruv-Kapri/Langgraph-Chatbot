@@ -21,8 +21,12 @@ def render_chat():
     st.session_state["message_history"].append({"role": "user", "content": user_input})
     displayLastMsg(st.session_state["message_history"])
 
+    thread_id = st.session_state["active_thread"]
     CONFIG: RunnableConfig = {
-        "configurable": {"thread_id": st.session_state["active_thread"]}
+        "configurable": {"thread_id": thread_id},
+        # "metadata": {"thread_id": thread_id},
+        # "run_name": st.session_state["threads"][thread_id]["title"],
+        # "run_id": thread_id,
     }
 
     # stream the llm response
