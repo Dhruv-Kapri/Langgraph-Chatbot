@@ -32,7 +32,7 @@ Langgraph-Chatbot/
 ├── frontend/
 │ ├── app.py                     # Streamlit app
 │ └── utils/
-│ └── messages.py                # Chat UI helpers
+│ └── components/
 │
 ├── pyproject.toml               # Package + dependency definition
 ├── requirements.txt             # Dev install shortcut (-e .)
