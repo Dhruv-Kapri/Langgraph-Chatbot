@@ -12,7 +12,12 @@ def init_session():
         st.session_state["threads"] = retrieve_all_threads()
 
     if "active_thread" not in st.session_state:
-        thread_id = generate_thread_id()
-        st.session_state["active_thread"] = thread_id
+        st.session_state["active_thread"] = generate_thread_id()
+
+    if "ingested_docs" not in st.session_state:
+        st.session_state["ingested_docs"] = {}
 
     register_thread(st.session_state["active_thread"])
+
+    thread_key = str(st.session_state["active_thread"])
+    st.session_state["ingested_docs"].setdefault(thread_key, {})

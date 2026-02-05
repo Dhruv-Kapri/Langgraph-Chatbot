@@ -2,15 +2,15 @@ from langgraph.prebuilt import ToolNode
 
 from backend.graph.state import ChatState
 from backend.llm import llm
+from backend.tools import TOOLS
 
-from .tools import tools
+llm_with_tools = llm.bind_tools(tools=TOOLS)
 
 
 def chat_node(state: ChatState) -> ChatState:
     messages = state["messages"]
-    llm_with_tools = llm.bind_tools(tools=tools)
     response = llm_with_tools.invoke(messages)
     return {"messages": [response]}
 
 
-tool_node = ToolNode(tools)
+tool_node = ToolNode(TOOLS)

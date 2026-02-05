@@ -1,9 +1,4 @@
-import requests
-from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_core.tools import tool
-from langgraph.prebuilt import ToolNode, tools_condition
-
-search_tool = DuckDuckGoSearchRun()
 
 
 @tool
@@ -35,17 +30,3 @@ def calculator(first_num: float, second_num: float, operation: str) -> dict:
 
     except Exception as e:
         return {"error": e}
-
-
-@tool
-def get_stock_price(symbol: str) -> dict:
-    """
-    Fetch latest stock price for a given symbol (e.g. 'AAPL', 'TSLA')
-    using Alpha Vantage with API key in the URL.
-    """
-    url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey=C9PE94QUEW9VWGFM"
-    r = requests.get(url)
-    return r.json()
-
-
-tools = [search_tool, calculator, get_stock_price]

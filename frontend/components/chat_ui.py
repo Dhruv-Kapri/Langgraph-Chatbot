@@ -7,6 +7,7 @@ from streamlit.elements.lib.mutable_status_container import StatusContainer
 from utils import displayAllMsg, displayLastMsg, set_thread_title
 
 from backend.langgraph_backend import chatbot
+from backend.memory import thread_document_metadata
 
 
 def render_chat():
@@ -27,9 +28,7 @@ def render_chat():
     thread_id = st.session_state["active_thread"]
     CONFIG: RunnableConfig = {
         "configurable": {"thread_id": thread_id},
-        # "metadata": {"thread_id": thread_id},
-        # "run_name": st.session_state["threads"][thread_id]["title"],
-        # "run_id": thread_id,
+        "run_name": "chat_turn",
     }
 
     # stream the llm response
@@ -73,4 +72,10 @@ def render_chat():
     )
 
     set_thread_title(user_input)
-    set_thread_title(user_input)
+
+    doc_meta = thread_document_metadata(thread_id)
+    if doc_meta:
+        st.caption(
+            f"Document indexed: {doc_meta.get('filename')} "
+            f"(chunks: {doc_meta.get('chunks')}, pages: {doc_meta.get('documents')})"
+        )
