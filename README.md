@@ -26,6 +26,8 @@ Langgraph-Chatbot/
 │ │ ├── state.py                 # Graph state schema
 │ │ ├── nodes.py                 # Graph nodes (LLM logic)
 │ │ └── builder.py               # Graph construction
+│ ├── memory/
+│ ├── tools/
 │ ├── llm.py                     # LLM configuration
 │ └── langgraph_backend.py
 │
@@ -84,14 +86,9 @@ streamlit run frontend/app.py
 - A single chat node invokes Gemini via `ChatGoogleGenerativeAI`
 - Responses are appended to state and returned to the UI
 - `thread_id` is used to scope conversation memory
-
----
-
-## Current Limitations
-
-- Uses in-memory checkpointing (state is lost on restart)
-- Single-node graph (no tools or routing yet)
-- No streaming responses
+- Uses `SqliteSaver` checkpointing (state is lost on restart)
+- `ToolNode` with conditional edge from `ChatNode` added.
+- LLm responses are streamed using streamlit for lower visual lag
 
 ---
 
